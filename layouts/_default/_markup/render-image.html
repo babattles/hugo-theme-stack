@@ -19,16 +19,33 @@
 
 		{{- if (default true .Page.Site.Params.imageProcessing.content.enabled) -}}
 			{{- $small := $image.Resize `480x` -}}
-			{{- $big := $image.Resize `1024x` -}}
-			{{- $Srcset = printf `%s 480w, %s 1024w` $small.RelPermalink $big.RelPermalink -}}
+			{{- $big := $image.Resize `600x` -}}
+			{{- $Srcset = printf `%s 480w, %s 600w` $small.RelPermalink $big.RelPermalink -}}
 		{{- end -}}
 	{{- end -}}
 {{- end -}}
 
-<img src="{{ $Permalink }}"
-	{{ with $Width }}width="{{ . }}"{{ end }}
-	{{ with $Height }}height="{{ . }}"{{ end }}
+{{ if .Title }}
+<figure>
+    <img src="{{ $Permalink }}"
 	{{ with $Srcset }}srcset="{{ . }}"{{ end }}
+	sizes="(max-width: 600px) 480px,600px"
+	loading="lazy"
+	{{ with $alt }}
+		alt="{{ . }}"
+	{{ end }}
+	{{ if $galleryImage }}
+		class="gallery-image" 
+		data-flex-grow="{{ div (mul $image.Width 100) $image.Height }}"
+		data-flex-basis="{{ div (mul $image.Width 240) $image.Height }}px"
+	{{ end }}
+	>
+    <figcaption>{{ .Title }}</figcaption>
+  </figure>
+{{ else }}
+<img src="{{ $Permalink }}"
+	{{ with $Srcset }}srcset="{{ . }}"{{ end }}
+	sizes="(max-width: 600px) 480px,600px"
 	loading="lazy"
 	{{ with $alt }}
 		alt="{{ . }}"
@@ -39,3 +56,4 @@
 		data-flex-basis="{{ div (mul $image.Width 240) $image.Height }}px"
 	{{ end }}
 >
+{{ end }}
